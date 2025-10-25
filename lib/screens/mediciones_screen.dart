@@ -70,7 +70,7 @@ class _MedicionesScreenState extends State<MedicionesScreen> {
     }
 
     try {
-      final Medicion nuevaMedicion = Medicion(
+      final MedicionSent nuevaMedicion = MedicionSent(
         sensorId: int.parse(selectedSensorId!),
         locationId: int.parse(selectedLocationId!),
         enteredBy: int.tryParse(enteredByController.text),

@@ -1,4 +1,4 @@
-class Medicion {
+class MedicionSent {
   final int? sensorId;
   final int? locationId;
   final int? enteredBy;
@@ -9,7 +9,7 @@ class Medicion {
   final String? batchId;
   final String? comments;
 
-  Medicion({
+  MedicionSent({
     required this.sensorId,
     required this.locationId,
     this.enteredBy,
@@ -34,8 +34,8 @@ class Medicion {
       'comments': comments,
     };
   }
-  factory Medicion.fromJson(Map<String, dynamic> json) {
-    return Medicion(
+  factory MedicionSent.fromJson(Map<String, dynamic> json) {
+    return MedicionSent(
       sensorId: json['sensor_id'],
       locationId: json['location_id'],
       enteredBy: json['entered_by'],
