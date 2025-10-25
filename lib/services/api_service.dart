@@ -2,7 +2,8 @@ import 'package:cargadatos/classes/magnitud_response.dart';
 import 'package:cargadatos/classes/magnitud_sent.dart';
 import 'package:cargadatos/classes/medicion_response.dart';
 import 'package:cargadatos/classes/medicion_sent.dart';
-import 'package:cargadatos/classes/sensor.dart';
+import 'package:cargadatos/classes/sensor_response.dart';
+import 'package:cargadatos/classes/sensor_sent.dart';
 import 'package:cargadatos/classes/unidad_response.dart';
 import 'package:cargadatos/classes/ubicacion_response.dart';
 import 'package:cargadatos/classes/ubicacion_sent.dart';
@@ -96,15 +97,11 @@ class ApiService {
 
   static Future<void> createLocation(UbicacionSent data) async {
     try{
-      final response = await http.post(
+      await http.post(
         Uri.parse('${ApiConfig.baseUrl}/api/locations'),
         headers: ApiConfig.getHeaders(),
         body: json.encode(data.toJson()),
       );
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        print("OMG");
-        //throw Exception('Error al crear ubicación');
-      }
     }
     catch (e) {
       throw Exception('Error al crear ubicación $e');
@@ -122,7 +119,7 @@ class ApiService {
   }
 
   // SENSORS
-  static Future<List<Sensor>> getSensors() async {
+  static Future<List<SensorResponse>> getSensors() async {
     try {
       final response = await http.get(
         Uri.parse('${ApiConfig.baseUrl}/api/sensor/list'),
@@ -130,7 +127,7 @@ class ApiService {
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.map((e) => Sensor.fromJson(e)).toList();
+        return data.map((e) => SensorResponse.fromJson(e)).toList();
       }
     } catch (e) {
       throw Exception("Error al cargar sensores: '$e'");
@@ -138,18 +135,17 @@ class ApiService {
     return [];
   }
 
-  static Future<Map<String, dynamic>> createSensor(
-    Map<String, dynamic> data,
-  ) async {
-    final response = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/api/sensors'),
-      headers: ApiConfig.getHeaders(),
-      body: json.encode(data),
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return json.decode(response.body);
+  static Future<void> createSensor(SensorSent data) async {
+    try{
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/api/sensors'),
+        headers: ApiConfig.getHeaders(),
+        body: json.encode(data.toJson()),
+      );
     }
-    throw Exception('Error al crear sensor');
+    catch (e) {
+      throw Exception('Error al crear sensor $e');
+    }    
   }
 
   static Future<void> deleteSensor(String id) async {

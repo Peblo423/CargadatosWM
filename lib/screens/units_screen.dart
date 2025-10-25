@@ -1,4 +1,5 @@
 
+import 'package:cargadatos/classes/unidad_response.dart';
 import 'package:cargadatos/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -57,7 +58,7 @@ class _UnitsScreenState extends State<UnitsScreen> {
                   padding: const EdgeInsets.all(16),
                   itemCount: units.length,
                   itemBuilder: (context, index) {
-                    final unit = units[index];
+                    final UnidadResponse unit = units[index];
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
@@ -69,10 +70,10 @@ class _UnitsScreenState extends State<UnitsScreen> {
                           ),
                         ),
                         title: Text(
-                          unit['name'] ?? 'Sin nombre',
+                          unit.ucumCode ?? 'Sin nombre',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Text(unit['symbol'] ?? ''),
+                        subtitle: Text(unit.display ?? ''),
                       ),
                     );
                   },

@@ -1,7 +1,8 @@
 
 import 'package:cargadatos/classes/medicion_response.dart';
 import 'package:cargadatos/classes/medicion_sent.dart';
-import 'package:cargadatos/classes/sensor.dart';
+import 'package:cargadatos/classes/sensor_response.dart';
+import 'package:cargadatos/classes/ubicacion_response.dart';
 import 'package:cargadatos/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -15,8 +16,8 @@ class MedicionesScreen extends StatefulWidget {
 
 class _MedicionesScreenState extends State<MedicionesScreen> {
   List<MedicionResponse> mediciones = [];
-  List<dynamic> locations = [];
-  List<Sensor> sensors = [];
+  List<UbicacionResponse> locations = [];
+  List<SensorResponse> sensors = [];
 
   String? selectedLocationId;
   String? selectedSensorId;
@@ -47,7 +48,7 @@ class _MedicionesScreenState extends State<MedicionesScreen> {
         mediciones = medicionesData;
         isLoading = false;
         if (locations.isNotEmpty)
-          selectedLocationId = locations[0]['id'].toString();
+          selectedLocationId = locations[0].id.toString();
         if (sensors.isNotEmpty) selectedSensorId = sensors[0].id.toString();
       });
     } catch (e) {
@@ -161,8 +162,8 @@ class _MedicionesScreenState extends State<MedicionesScreen> {
                                   loc,
                                 ) {
                                   return DropdownMenuItem(
-                                    value: loc['id'].toString(),
-                                    child: Text(loc['name'] ?? ''),
+                                    value: loc.id.toString(),
+                                    child: Text(loc.name ?? ''),
                                   );
                                 }).toList(),
                                 onChanged: (value) {

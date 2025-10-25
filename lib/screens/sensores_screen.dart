@@ -1,5 +1,5 @@
-
-import 'package:cargadatos/classes/sensor.dart';
+import 'package:cargadatos/classes/sensor_response.dart';
+import 'package:cargadatos/classes/sensor_sent.dart';
 import 'package:cargadatos/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,7 @@ class SensoresScreen extends StatefulWidget {
 }
 
 class _SensoresScreenState extends State<SensoresScreen> {
-  List<Sensor> sensores = [];
+  List<SensorResponse> sensores = [];
   bool isLoading = true;
 
   @override
@@ -31,26 +31,57 @@ class _SensoresScreenState extends State<SensoresScreen> {
     } catch (e) {
       setState(() => isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
       }
     }
   }
 
   void _showAddDialog() {
-    final nameController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+    final nameCtrl = TextEditingController();
+    final manufacturerCtrl = TextEditingController();
+    final modelCtrl = TextEditingController();
+    final serialNumberCtrl = TextEditingController();
+    final sensorTypeCtrl = TextEditingController();
+    final installedAtCtrl = TextEditingController();
+    final notesCtrl = TextEditingController();
+    bool isActive = true;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Agregar Sensor'),
-        content: TextField(
-          controller: nameController,
-          decoration: const InputDecoration(
-            labelText: 'Nombre del sensor',
-            border: OutlineInputBorder(),
-          ),
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTextField(nameCtrl, 'Nombre'),
+                    _buildTextField(manufacturerCtrl, 'Fabricante'),
+                    _buildTextField(modelCtrl, 'Modelo'),
+                    _buildTextField(serialNumberCtrl, 'Número de Serie'),
+                    _buildTextField(sensorTypeCtrl, 'Tipo de Sensor'),
+                    _buildTextField(installedAtCtrl, 'Fecha Instalación (YYYY-MM-DDTHH:MM:SSZ)'),
+                    _buildTextField(notesCtrl, 'Notas', maxLines: 3),
+                    SwitchListTile(
+                      title: const Text('Activo'),
+                      value: isActive,
+                      onChanged: (bool value) {
+                        setState(() {
+                          isActive = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
         actions: [
           TextButton(
@@ -59,23 +90,31 @@ class _SensoresScreenState extends State<SensoresScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (nameController.text.isNotEmpty) {
+              if (_formKey.currentState!.validate()) {
                 try {
-                  await ApiService.createSensor({
-                    'name': nameController.text,
-                    'active': true,
-                  });
+                  final newSensor = SensorSent(
+                    name: nameCtrl.text,
+                    manufacturer: manufacturerCtrl.text,
+                    model: modelCtrl.text,
+                    serialNumber: serialNumberCtrl.text,
+                    sensorType: sensorTypeCtrl.text,
+                    installedAt: installedAtCtrl.text,
+                    active: isActive,
+                    notes: notesCtrl.text,
+                  );
+
+                  await ApiService.createSensor(newSensor);
                   Navigator.pop(context);
                   _loadSensores();
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Sensor creado')),
+                      const SnackBar(content: Text('Sensor creado con éxito')),
                     );
                   }
                 } catch (e) {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: ${e.toString()}')),
+                      SnackBar(content: Text('Error al crear: ${e.toString()}')),
                     );
                   }
                 }
@@ -84,6 +123,27 @@ class _SensoresScreenState extends State<SensoresScreen> {
             child: const Text('Guardar'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      {int maxLines = 1}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+        maxLines: maxLines,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Este campo es requerido';
+          }
+          return null;
+        },
       ),
     );
   }
