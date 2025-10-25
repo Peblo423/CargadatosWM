@@ -1,4 +1,6 @@
 
+import 'package:cargadatos/classes/ubicacion_response.dart';
+import 'package:cargadatos/classes/ubicacion_sent.dart';
 import 'package:cargadatos/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +13,7 @@ class UbicacionesScreen extends StatefulWidget {
 }
 
 class _UbicacionesScreenState extends State<UbicacionesScreen> {
-  List<dynamic> ubicaciones = [];
+  List<UbicacionResponse> ubicaciones = [];
   bool isLoading = true;
 
   @override
@@ -33,7 +35,6 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            duration: Duration(seconds: 999),
           ),
         );
       }
@@ -41,43 +42,33 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
   }
 
   void _showAddDialog() {
-    final nameController = TextEditingController();
-    final latController = TextEditingController();
-    final lonController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+    final nameCtrl = TextEditingController();
+    final descriptionCtrl = TextEditingController();
+    final latCtrl = TextEditingController();
+    final lonCtrl = TextEditingController();
+    final altitudeCtrl = TextEditingController();
+    final addressCtrl = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Agregar Ubicación'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nombre del lugar',
-                border: OutlineInputBorder(),
-              ),
+        content: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTextField(nameCtrl, 'Nombre'),
+                _buildTextField(descriptionCtrl, 'Descripción', maxLines: 2),
+                _buildTextField(latCtrl, 'Latitud'),
+                _buildTextField(lonCtrl, 'Longitud'),
+                _buildTextField(altitudeCtrl, 'Altitud'),
+                _buildTextField(addressCtrl, 'Dirección'),
+              ],
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: latController,
-              decoration: const InputDecoration(
-                labelText: 'Latitud',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: lonController,
-              decoration: const InputDecoration(
-                labelText: 'Longitud',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-          ],
+          ),
         ),
         actions: [
           TextButton(
@@ -86,24 +77,29 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (nameController.text.isNotEmpty) {
+              if (_formKey.currentState!.validate()) {
                 try {
-                  await ApiService.createLocation({
-                    'name': nameController.text,
-                    'latitude': latController.text,
-                    'longitude': lonController.text,
-                  });
+                  final newUbicacion = UbicacionSent(
+                    name: nameCtrl.text,
+                    description: descriptionCtrl.text,
+                    latitude: double.tryParse(latCtrl.text),
+                    longitude: double.tryParse(lonCtrl.text),
+                    altitude: double.tryParse(altitudeCtrl.text),
+                    address: addressCtrl.text,
+                  );
+
+                  await ApiService.createLocation(newUbicacion);
                   Navigator.pop(context);
                   _loadUbicaciones();
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Ubicación creada')),
+                      const SnackBar(content: Text('Ubicación creada con éxito')),
                     );
                   }
                 } catch (e) {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: ${e.toString()}')),
+                      SnackBar(content: Text('Error al crear: ${e.toString()}')),
                     );
                   }
                 }
@@ -112,6 +108,28 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
             child: const Text('Guardar'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      {TextInputType keyboardType = TextInputType.text, int maxLines = 1}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+        keyboardType: keyboardType,
+        maxLines: maxLines,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Este campo es requerido';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -148,11 +166,11 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
                           ),
                         ),
                         title: Text(
-                          ubicacion['name'] ?? 'Sin nombre',
+                          ubicacion.name ?? 'Sin nombre',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          'Lat: ${ubicacion['latitude'] ?? ''}\nLon: ${ubicacion['longitude'] ?? ''}',
+                          'Lat: ${ubicacion.latDd ?? 'N/A'}\nLon: ${ubicacion.lonDd ?? 'N/A'}',
                         ),
                         isThreeLine: true,
                         trailing: IconButton(
@@ -160,7 +178,7 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
                           onPressed: () async {
                             try {
                               await ApiService.deleteLocation(
-                                ubicacion['id'].toString(),
+                                ubicacion.id.toString(),
                               );
                               _loadUbicaciones();
                               if (mounted) {

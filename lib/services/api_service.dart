@@ -4,6 +4,8 @@ import 'package:cargadatos/classes/medicion_response.dart';
 import 'package:cargadatos/classes/medicion_sent.dart';
 import 'package:cargadatos/classes/sensor.dart';
 import 'package:cargadatos/classes/unidad_response.dart';
+import 'package:cargadatos/classes/ubicacion_response.dart';
+import 'package:cargadatos/classes/ubicacion_sent.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -80,29 +82,33 @@ class ApiService {
   }
 
   // LOCATIONS
-  static Future<List<dynamic>> getLocations() async {
+  static Future<List<UbicacionResponse>> getLocations() async {
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/api/locations/list'),
       headers: ApiConfig.getHeaders(),
     );
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((e) => UbicacionResponse.fromJson(e)).toList();
     }
     throw Exception('Error al cargar ubicaciones');
   }
 
-  static Future<Map<String, dynamic>> createLocation(
-    Map<String, dynamic> data,
-  ) async {
-    final response = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/api/locations'),
-      headers: ApiConfig.getHeaders(),
-      body: json.encode(data),
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return json.decode(response.body);
+  static Future<void> createLocation(UbicacionSent data) async {
+    try{
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/api/locations'),
+        headers: ApiConfig.getHeaders(),
+        body: json.encode(data.toJson()),
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        print("OMG");
+        //throw Exception('Error al crear ubicación');
+      }
     }
-    throw Exception('Error al crear ubicación');
+    catch (e) {
+      throw Exception('Error al crear ubicación $e');
+    }
   }
 
   static Future<void> deleteLocation(String id) async {
