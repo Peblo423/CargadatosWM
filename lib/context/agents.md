@@ -1,0 +1,1 @@
+Queremos hacer una app simple y llanamente para cargar datos en la BD a través de los endpoints de una API cuya estructura conocemos. Yo mismo cargo todo desde mi máquina, localmente, con docker. Lo queremos hacer en flutter.
