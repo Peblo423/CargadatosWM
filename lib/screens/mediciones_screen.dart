@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 // PANTALLA DE MEDICIONES
 class MedicionesScreen extends StatefulWidget {
-  const MedicionesScreen({Key? key}) : super(key: key);
+  const MedicionesScreen({super.key});
 
   @override
   State<MedicionesScreen> createState() => _MedicionesScreenState();
@@ -47,8 +47,9 @@ class _MedicionesScreenState extends State<MedicionesScreen> {
         sensors = sensorsData;
         mediciones = medicionesData;
         isLoading = false;
-        if (locations.isNotEmpty)
+        if (locations.isNotEmpty) {
           selectedLocationId = locations[0].id.toString();
+        }
         if (sensors.isNotEmpty) selectedSensorId = sensors[0].id.toString();
       });
     } catch (e) {
@@ -89,14 +90,16 @@ class _MedicionesScreenState extends State<MedicionesScreen> {
       await ApiService.createMeasurement(nuevaMedicion);
 
       // Limpiar controladores
-      [
+      for (var c in [
         enteredByController,
         sampledByController,
         statusController,
         sourceController,
         batchIdController,
         commentsController,
-      ].forEach((c) => c.clear());
+      ]) {
+        c.clear();
+      }
 
       _loadData();
 
@@ -152,7 +155,7 @@ class _MedicionesScreenState extends State<MedicionesScreen> {
                               ),
                               const SizedBox(height: 16),
                               DropdownButtonFormField<String>(
-                                value: selectedLocationId,
+                                initialValue: selectedLocationId,
                                 decoration: const InputDecoration(
                                   labelText: 'Ubicación',
                                   border: OutlineInputBorder(),
@@ -174,7 +177,7 @@ class _MedicionesScreenState extends State<MedicionesScreen> {
                               ),
                               const SizedBox(height: 12),
                               DropdownButtonFormField<String>(
-                                value: selectedSensorId,
+                                initialValue: selectedSensorId,
                                 decoration: const InputDecoration(
                                   labelText: 'Sensor',
                                   border: OutlineInputBorder(),

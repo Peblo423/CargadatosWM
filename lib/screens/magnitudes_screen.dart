@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 // PANTALLA DE MAGNITUDES
 class MagnitudesScreen extends StatefulWidget {
-  const MagnitudesScreen({Key? key}) : super(key: key);
+  const MagnitudesScreen({super.key});
 
   @override
   State<MagnitudesScreen> createState() => _MagnitudesScreenState();
@@ -64,7 +64,7 @@ class _MagnitudesScreenState extends State<MagnitudesScreen> {
   }
 
   void _showAddDialog() {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final groupNameCtrl = TextEditingController();
     final nameEnCtrl = TextEditingController();
     final abbreviationCtrl = TextEditingController();
@@ -83,14 +83,14 @@ class _MagnitudesScreenState extends State<MagnitudesScreen> {
         content: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Form(
-              key: _formKey,
+              key: formKey,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (units.isNotEmpty)
                       DropdownButtonFormField<int>(
-                        value: selectedUnitId,
+                        initialValue: selectedUnitId,
                         decoration: const InputDecoration(labelText: 'Unidad'),
                         items: units.map<DropdownMenuItem<int>>((unit) {
                           return DropdownMenuItem<int>(
@@ -137,7 +137,7 @@ class _MagnitudesScreenState extends State<MagnitudesScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
+              if (formKey.currentState!.validate()) {
                 try {
                   final newMagnitud = MagnitudSent(
                     unitId: selectedUnitId!,

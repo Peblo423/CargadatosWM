@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 // MENÚ PRINCIPAL
 class MainMenuScreen extends StatelessWidget {
-  const MainMenuScreen({Key? key}) : super(key: key);
+  const MainMenuScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

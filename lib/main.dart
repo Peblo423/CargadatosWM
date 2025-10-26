@@ -6,7 +6,7 @@ void main() {
 }
 
 class WaterMeasurementApp extends StatelessWidget {
-  const WaterMeasurementApp({Key? key}) : super(key: key);
+  const WaterMeasurementApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 // PANTALLA DE UNIDADES
 class UnitsScreen extends StatefulWidget {
-  const UnitsScreen({Key? key}) : super(key: key);
+  const UnitsScreen({super.key});
 
   @override
   State<UnitsScreen> createState() => _UnitsScreenState();

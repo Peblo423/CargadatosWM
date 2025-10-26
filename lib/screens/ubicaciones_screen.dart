@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 // PANTALLA DE UBICACIONES
 class UbicacionesScreen extends StatefulWidget {
-  const UbicacionesScreen({Key? key}) : super(key: key);
+  const UbicacionesScreen({super.key});
 
   @override
   State<UbicacionesScreen> createState() => _UbicacionesScreenState();
@@ -42,7 +42,7 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
   }
 
   void _showAddDialog() {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController();
     final descriptionCtrl = TextEditingController();
     final latCtrl = TextEditingController();
@@ -55,7 +55,7 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Agregar Ubicación'),
         content: Form(
-          key: _formKey,
+          key: formKey,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -77,7 +77,7 @@ class _UbicacionesScreenState extends State<UbicacionesScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
+              if (formKey.currentState!.validate()) {
                 try {
                   final newUbicacion = UbicacionSent(
                     name: nameCtrl.text,

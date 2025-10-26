@@ -103,7 +103,7 @@ class ApiService {
   //============== MAGNITUDES ==============
   static Future<List<MagnitudResponse>> getMagnitudes() async {
     return await _get('/api/magnitudes/list',
-        (data) => data.map((e) => MagnitudResponse.fromJson(e)).toList());
+        (data) => (data as List).map((e) => MagnitudResponse.fromJson(e)).toList());
   }
 
   static Future<void> createMagnitud(MagnitudSent data) async {
@@ -117,7 +117,7 @@ class ApiService {
   //============== LOCATIONS ==============
   static Future<List<UbicacionResponse>> getLocations() async {
     return await _get('/api/locations/list',
-        (data) => data.map((e) => UbicacionResponse.fromJson(e)).toList());
+        (data) => (data as List).map((e) => UbicacionResponse.fromJson(e)).toList());
   }
 
   static Future<void> createLocation(UbicacionSent data) async {
@@ -131,7 +131,7 @@ class ApiService {
   //============== SENSORS ==============
   static Future<List<SensorResponse>> getSensors() async {
     return await _get(
-        '/api/sensor/list', (data) => data.map((e) => SensorResponse.fromJson(e)).toList());
+        '/api/sensor/list', (data) => (data as List).map((e) => SensorResponse.fromJson(e)).toList());
   }
 
   static Future<void> createSensor(SensorSent data) async {
@@ -145,7 +145,7 @@ class ApiService {
   //============== MEASUREMENTS ==============
   static Future<List<MedicionResponse>> getMeasurements() async {
     return await _get('/api/measurements/list',
-        (data) => data.map((e) => MedicionResponse.fromJson(e)).toList());
+        (data) => (data as List).map((e) => MedicionResponse.fromJson(e)).toList());
   }
 
   static Future<void> createMeasurement(MedicionSent data) async {
@@ -155,6 +155,6 @@ class ApiService {
   //============== UNITS ==============
   static Future<List<UnidadResponse>> getUnits() async {
     return await _get(
-        '/api/units/list', (data) => data.map((e) => UnidadResponse.fromJson(e)).toList());
+        '/api/units/list', (data) => (data as List).map((e) => UnidadResponse.fromJson(e)).toList());
   }
 }

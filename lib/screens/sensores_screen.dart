@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 // PANTALLA DE SENSORES
 class SensoresScreen extends StatefulWidget {
-  const SensoresScreen({Key? key}) : super(key: key);
+  const SensoresScreen({super.key});
 
   @override
   State<SensoresScreen> createState() => _SensoresScreenState();
@@ -39,7 +39,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
   }
 
   void _showAddDialog() {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController();
     final manufacturerCtrl = TextEditingController();
     final modelCtrl = TextEditingController();
@@ -56,7 +56,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
         content: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Form(
-              key: _formKey,
+              key: formKey,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -90,7 +90,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
+              if (formKey.currentState!.validate()) {
                 try {
                   final newSensor = SensorSent(
                     name: nameCtrl.text,
